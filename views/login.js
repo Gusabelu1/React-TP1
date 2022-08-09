@@ -1,27 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput, Alert } from 'react-native-web';
 import axios from 'axios';
+import authContext from '../contexts/authContext.js';
 
-function authenticate (email, password) {
-    axios.post('http://challenge-react.alkemy.org/', {
+async function authenticate (email, password) {
+    return axios.post('http://challenge-react.alkemy.org/', {
         email: email,
         password: password
     })
-    .then(function (response) {
-        gettingData = false;
-        console.log(response);
+    .then(() => {
+        return true;
     })
-    .catch(function (error) {
-        gettingData = false;
-        console.log(error);
+    .catch(() => {
+        return false;
     })
 }
 
 export default function login() {
   const [email, onChangeEmail] = useState('');
   const [passwd, onChangePasswd] = useState('');
+  const { setToken } = useContext(authContext);
 
   return (
     <View style={styles.container}>
@@ -43,11 +43,12 @@ export default function login() {
         />
         <Button
             title="Enviar"
-            onPress={() => {
+            onPress={async () => {
                 if (!email || !passwd) {
                     console.log('error');
                 } else {
-                    setTimeout(() => {  authenticate(email, passwd); }, 5000);
+                    const response = await authenticate(email, passwd);
+                    setToken(response)
                 }
             }}
         ></Button>
