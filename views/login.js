@@ -19,8 +19,8 @@ async function authenticate (email, password) {
 }
 
 export default function login() {
-  const [email, onChangeEmail] = useState('');
-  const [passwd, onChangePasswd] = useState('');
+  const [email, setEmail] = useState('');
+  const [passwd, setPasswd] = useState('');
   const { setToken } = useContext(authContext);
 
   return (
@@ -29,14 +29,14 @@ export default function login() {
         <Text>Ingresar Email</Text>
         <TextInput
             style={styles.input}
-            onChangeText={onChangeEmail}
+            onChangeText={setEmail}
             value={email}
             placeholder="E-mail"
         />
         <Text>Ingresar Contraseña</Text>
         <TextInput
             style={styles.input}
-            onChangeText={onChangePasswd}
+            onChangeText={setPasswd}
             value={passwd}
             placeholder="Contraseña"
             secureTextEntry={true}
@@ -47,8 +47,8 @@ export default function login() {
                 if (!email || !passwd) {
                     console.log('error');
                 } else {
-                    const response = await authenticate(email, passwd);
-                    setToken(response)
+                    const res = await authenticate(email, passwd);
+                    setToken(res)
                 }
             }}
         ></Button>
