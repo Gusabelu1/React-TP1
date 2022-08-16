@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput, Alert } from 'react-native-web';
+import Busqueda from './busqueda.js'
 import axios from 'axios';
 import menuContext from '../contexts/menuContext';
 
@@ -21,41 +22,20 @@ async function fetchData(text) {
 export default function platos() {
   const [busqueda, setBusqueda] = useState('');
   const [platos, setPlatos] = useState([]);
-  const { setMenu } = useContext(menuContext);
-  let platosUsuario = [];
+  const { setMenu, menu } = useContext(menuContext);
 
   return (
     <View style={styles.container}>
-        <TextInput
-          style={styles.search}
-          onChangeText={setBusqueda}
-          value={busqueda}
-          placeholder="Escriba algún plato"
-        />
-        <Button
-          title="Buscar"
-          onPress={async () => {
-            if (busqueda.length <= 2) {
-              console.log('Escriba un plato usando 2 letras o más.');
-            } else {
-              const res = await fetchData(busqueda);
-              setPlatos(res);
-              console.log(res)
-            }
-          }}
-        ></Button>
-        {Object.values(platos).map(item => {
+        {Object.values(setMenu).map(item => {
           return ([
             <Text style={styles.platos} key={item.id}>{item.title}</Text>,
-            <Button
-              title="Agregar"
-              onPress={() => {
-                platosUsuario += item
-                console.log(platosUsuario)
-              }}
-            ></Button>
+            <Image
+                style={styles.stretch}
+                source={item.image}
+            />
           ]);
         })}
+        <Busqueda/>
     </View>
   );
 }

@@ -2,7 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Login from './views/Login.js';
-import Menu from './views/Menu.js';
+import Busqueda from './views/busqueda.js';
+import Home from './views/home.js';
 import authContext from './contexts/authContext.js';
 import menuContext from './contexts/menuContext.js';
 
@@ -14,7 +15,7 @@ export default function App() {
     <authContext.Provider value={{ token, setToken }}>
       { token ?
         <menuContext.Provider value={{ menu, setMenu }}>
-          <Menu/>
+          <Home/>
         </menuContext.Provider>
       :
         <Login/>
