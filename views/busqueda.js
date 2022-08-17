@@ -1,9 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput, Alert } from 'react-native-web';
+import { Button, TextInput, Alert, Modal } from 'react-native-web';
 import axios from 'axios';
-import menuContext from '../contexts/menuContext';
 
 async function fetchData(text) {
   const apikey = '&apiKey=f6f6f4ca17c74fdb8051f432f9e7cc00';
@@ -18,11 +17,9 @@ async function fetchData(text) {
     });
 }
 
-export default function platos() {
+export default function platos({props}) {
   const [busqueda, setBusqueda] = useState('');
   const [platos, setPlatos] = useState([]);
-  const { setMenu, menu } = useContext(menuContext);
-  let platosUsuario = [];
 
   return (
     <View style={styles.container}>
@@ -50,13 +47,10 @@ export default function platos() {
             <Button
               title="Agregar"
               onPress={() => {
-                menu.push({
-                  id: item.id,
-                  image: item.image,
-                  imageType: item.imageType,
-                  title: item.title
-                })
-                console.log(menu)
+                let aux = props.menu
+                aux.push(item)
+                props.setMenu(aux)
+                console.log(props.menu)
               }}
             ></Button>
           ]);

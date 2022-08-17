@@ -5,7 +5,6 @@ import Login from './views/Login.js';
 import Busqueda from './views/busqueda.js';
 import Home from './views/home.js';
 import authContext from './contexts/authContext.js';
-import menuContext from './contexts/menuContext.js';
 
 export default function App() {
   const [token, setToken] = useState(false)
@@ -14,9 +13,10 @@ export default function App() {
   return (
     <authContext.Provider value={{ token, setToken }}>
       { token ?
-        <menuContext.Provider value={{ menu, setMenu }}>
-          <Home/>
-        </menuContext.Provider>
+        <View style={styles.container}>
+          <Busqueda props={{menu, setMenu}}/>
+          <Home props={{menu, setMenu}}/>
+        </View>
       :
         <Login/>
       }
@@ -27,8 +27,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#1d1d27',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: '',
   },
 });
