@@ -1,60 +1,48 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput, Alert, Modal } from 'react-native-web';
+import { Button, TextInput, Alert, Modal, FlatList } from 'react-native-web';
 import axios from 'axios';
+import Plato from './plato'
 
-async function fetchData(text) {
-  const apikey = '&apiKey=f6f6f4ca17c74fdb8051f432f9e7cc00';
-  const url = 'https://api.spoonacular.com/recipes/complexSearch?query=';
-
-  return await axios.get(url + text + apikey)
+async function onChangeFetchData(text) {
+  const apikey = 'f6f6f4ca17c74fdb8051f432f9e7cc00';
+  const url = 'https://api.spoonacular.com/recipes/complexSearch';
+  if (text.length > 2) {
+    return await axios.get(url, {
+      params: {
+        apiKey: apikey,
+        query: text
+      }
+    })
     .then((response) => {
       return response.data.results;
     })
     .catch(() => {
       return null;
     });
+  }
 }
 
 export default function platos({props}) {
-  const [busqueda, setBusqueda] = useState('');
   const [platos, setPlatos] = useState([]);
+  const renderItem = ({ item }) => (
+    <Plato data={item} added={false} menu={props.menu} setMenu={props.setMenu} />
+  )
 
   return (
     <View style={styles.container}>
-        <TextInput
-          style={styles.search}
-          onChangeText={setBusqueda}
-          value={busqueda}
-          placeholder="Escriba algún plato"
-        />
-        <Button
-          title="Buscar"
-          onPress={async () => {
-            if (busqueda.length <= 2) {
-              console.log('Escriba un plato usando 2 letras o más.');
-            } else {
-              const res = await fetchData(busqueda);
-              setPlatos(res);
-              console.log(res)
-            }
-          }}
-        ></Button>
-        {Object.values(platos).map(item => {
-          return ([
-            <Text style={styles.platos} key={item.id}>{item.title}</Text>,
-            <Button
-              title="Agregar"
-              onPress={() => {
-                let aux = props.menu
-                aux.push(item)
-                props.setMenu(aux)
-                console.log(props.menu)
-              }}
-            ></Button>
-          ]);
-        })}
+      <TextInput
+        style={styles.search}
+        onChangeText={async (text) => {setPlatos(await onChangeFetchData(text))}}
+        placeholder="Escriba algún plato"
+      />
+      <FlatList
+        data={platos}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.platos}
+      />
     </View>
   );
 }
@@ -76,6 +64,7 @@ const styles = StyleSheet.create({
     },
 
     platos: {
-      color: '#fff',
+      paddingTop: '1rem',
+      minHeight: '175%',
     }
   });

@@ -4,48 +4,30 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button, TextInput, Alert, FlatList } from 'react-native-web';
 import Busqueda from './busqueda.js'
 import axios from 'axios';
-
-async function fetchData(text) {
-  const apikey = '&apiKey=f6f6f4ca17c74fdb8051f432f9e7cc00';
-  const url = 'https://api.spoonacular.com/recipes/complexSearch?query=';
-
-  return await axios.get(url + text + apikey)
-    .then((response) => {
-      return response.data.results;
-    })
-    .catch(() => {
-      return null;
-    });
-}
+import Plato from './plato';
 
 export default function platos({props}) {
-  const [busqueda, setBusqueda] = useState('');
-  const [platos, setPlatos] = useState([]);
+  const renderItem = ({ item }) => (
+    <Plato data={item} added={true} menu={props.menu} setMenu={props.setMenu} />
+  )
 
   return (
     <View style={styles.container}>
-      {Object.values(props.menu).map(item => {
-        return ([
-          <Text style={styles.platos} key={item.id}>sexo</Text>,
-          <Image
-            style={styles.stretch}
-            source={item.image}
-          />
-        ]);
-      })}
-      <FlatList>
-
-      </FlatList>
+      <FlatList
+        data={props.menu}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.platos}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#1d1d27',
-    alignItems: 'center',
-    justifyContent: '',
+    position: 'absolute',
+    left: '0',
+    marginLeft: '1rem'
   },
 
   search: {
