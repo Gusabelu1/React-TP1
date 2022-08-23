@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, Text, View } from 'react-native-web';
+import { Button, Text, View, Image } from 'react-native-web';
 import axios from 'axios';
 
 async function agregarPlato(id) {
@@ -23,23 +23,31 @@ async function agregarPlato(id) {
 export default function plato({ data, added, menu, setMenu}) {
     return (
         <View style={styles.container}>
-            <Text style={{color: '#fff'}}>Plato: {data.title}</Text>
+            <Text style={{color: '#fff'}}>{data.title}</Text>
             { added ?
                 <>
+                <Image
+                    style={styles.platoImage}
+                    source={{
+                        uri: data.image,
+                    }}
+                />
                 <Button
                     onPress={() => {
-                        menu = menu.filter(item => item.id != item.id);
+                        menu = menu.splice(data.id,1);
                         setMenu(menu);
                     }}
                     title="Eliminar"
                 ></Button>
+                <Text style={{marginVertical: '.25rem'}}></Text>
                 <Button
                     onPress={() => {
                         detalles(data)
                     }}
                     title="Detalles"
+                    
                 ></Button>
-                { data.vegan ? 
+                { data.vegan ?
                     <Text style={{color: '#00cc00'}}>Vegano</Text>
                 :
                     null
@@ -68,10 +76,11 @@ export default function plato({ data, added, menu, setMenu}) {
 
                         aux.push(nuevoPlato)
                         setMenu([...aux])
+                        console.log(menu)
                     }}
 
                     disabled={menu.some(plato => {
-                        return plato.id === data.id || menu.length == 4
+                        return (plato.id === data.id || menu.length == 4)
                     })}
                     title="Agregar"
                 ></Button>
@@ -92,11 +101,17 @@ const styles = StyleSheet.create({
       color: '#fff',
       borderBottomWidth: '.1rem',
       borderBottomColor: '#fff',
-      paddingVertical: '.5rem',
-      paddingHorizontal: '5rem',
+      marginTop: '.15rem',
     },
 
     platos: {
       color: '#fff',
+    },
+
+    platoImage: {
+        height: '10rem',
+        width: '10rem',
+        borderRadius: '.25rem',
+        marginVertical: '1rem',
     }
   });
