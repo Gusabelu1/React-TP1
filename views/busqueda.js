@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
 
     platos: {
       paddingTop: '1rem',
-      minHeight: '175%',
+      // minHeight: '175%',
     }
   });

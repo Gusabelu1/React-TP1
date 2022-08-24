@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, Text, View, Image } from 'react-native-web';
+import glutenFree from '../assets/gluten_free.png'
 import axios from 'axios';
 
 async function agregarPlato(id) {
@@ -32,9 +33,23 @@ export default function plato({ data, added, menu, setMenu}) {
                         uri: data.image,
                     }}
                 />
+                { data.glutenFree ?
+                    <View>
+                    <Image
+                        style={styles.glutenFree}
+                        source={{
+                            uri: glutenFree,
+                        }}
+                    />
+                    </View>
+                :
+                    null
+                }
+                <Text style={{color: '#fff', marginTop: '.5rem'}}>Precio: ${data.pricePerServing} c/u</Text>
+                <Text style={{color: '#fff', marginBottom: '.5rem'}}>Espera: {data.readyInMinutes} minutos</Text>
                 <Button
                     onPress={() => {
-                        menu = menu.splice(data.id,1);
+                        menu = menu.filter(item => item.id != data.id);
                         setMenu(menu);
                     }}
                     title="Eliminar"
@@ -45,8 +60,8 @@ export default function plato({ data, added, menu, setMenu}) {
                         detalles(data)
                     }}
                     title="Detalles"
-                    
                 ></Button>
+                <Text style={{marginBottom: '2rem'}}></Text>
                 { data.vegan ?
                     <Text style={{color: '#00cc00'}}>Vegano</Text>
                 :
@@ -112,6 +127,17 @@ const styles = StyleSheet.create({
         height: '10rem',
         width: '10rem',
         borderRadius: '.25rem',
-        marginVertical: '1rem',
+        placeSelf: 'center',
+        marginTop: '1rem'
+    },
+
+    caracteristicas: {
+        color: '#fff',
+    },
+
+    glutenFree: {
+        height: '3rem',
+        width: '3rem',
+        // position: 'absolute'
     }
   });
