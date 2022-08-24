@@ -1,11 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, Text, View, Image } from 'react-native-web';
+import { Button, Text, View, Image, Modal } from 'react-native-web';
 import glutenFree from '../assets/gluten_free.png'
 import axios from 'axios';
+import { Center, HStack, Stack } from 'native-base';
 
 async function agregarPlato(id) {
-    const apikey = 'f6f6f4ca17c74fdb8051f432f9e7cc00';
+    const apikey = '109d7d37f51f4bd7a32584d8f55ad71a';
     const url = `https://api.spoonacular.com/recipes/${id}/information`;
 
     return await axios.get(url, {
@@ -21,32 +22,42 @@ async function agregarPlato(id) {
     });
 }
 
+function detalles(data) {
+    return (
+        <View style={styles.modalContainer}>
+            <Modal>
+                <Text>prueba</Text>
+            </Modal>
+        </View>
+    )
+}
+
 export default function plato({ data, added, menu, setMenu}) {
     return (
         <View style={styles.container}>
-            <Text style={{color: '#fff'}}>{data.title}</Text>
             { added ?
                 <>
-                <Image
-                    style={styles.platoImage}
-                    source={{
-                        uri: data.image,
-                    }}
-                />
+                    <Text style={{color: '#fff'}}>{data.title}</Text>
+                    <Image
+                        style={styles.platoImage}
+                        source={{
+                            uri: data.image,
+                        }}
+                    />
                 { data.glutenFree ?
-                    <View>
+                    <Center>
                     <Image
                         style={styles.glutenFree}
                         source={{
                             uri: glutenFree,
                         }}
                     />
-                    </View>
+                    </Center>
                 :
-                    null
+                    <Text style={{height: '48px'}}></Text>
                 }
                 <Text style={{color: '#fff', marginTop: '.5rem'}}>Precio: ${data.pricePerServing} c/u</Text>
-                <Text style={{color: '#fff', marginBottom: '.5rem'}}>Espera: {data.readyInMinutes} minutos</Text>
+                <Text style={{color: '#fff', marginBottom: '.5rem'}}>Coccion: {data.readyInMinutes} minutos</Text>
                 <Button
                     onPress={() => {
                         menu = menu.filter(item => item.id != data.id);
@@ -61,15 +72,16 @@ export default function plato({ data, added, menu, setMenu}) {
                     }}
                     title="Detalles"
                 ></Button>
-                <Text style={{marginBottom: '2rem'}}></Text>
                 { data.vegan ?
                     <Text style={{color: '#00cc00'}}>Vegano</Text>
-                :
-                    null
+                    :
+                    <Text style={{height: '19px'}}></Text>
                 }
+                <Text style={{marginBottom: '2rem'}}></Text>
                 </>
             :
                 <>
+                <Text style={{color: '#fff'}}>{data.title}</Text>
                 <Button
                     onPress={ async () => {
                         let aux = menu
@@ -139,5 +151,17 @@ const styles = StyleSheet.create({
         height: '3rem',
         width: '3rem',
         // position: 'absolute'
+    },
+
+    modal: {
+        height: '300px',
+        width: '300px',
+        backgroundColor: '#fff',
+    },
+
+    modalContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex:1
     }
   });

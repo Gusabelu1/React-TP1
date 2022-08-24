@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { NativeBaseProvider } from "native-base";
 import Login from './views/Login.js';
 import Busqueda from './views/busqueda.js';
 import Home from './views/home.js';
@@ -11,16 +12,18 @@ export default function App() {
   const [menu, setMenu] = useState([])
 
   return (
-    <authContext.Provider value={{ token, setToken }}>
-      { token ?
-        <View style={styles.container}>
-          <Busqueda props={{menu, setMenu}}/>
-          <Home props={{menu, setMenu}}/>
-        </View>
-      :
-        <Login/>
-      }
-    </authContext.Provider>
+    <NativeBaseProvider>
+      <authContext.Provider value={{ token, setToken }}>
+        { token ?
+          <View style={styles.container}>
+            <Busqueda props={{menu, setMenu}}/>
+            <Home props={{menu, setMenu}}/>
+          </View>
+        :
+          <Login/>
+        }
+      </authContext.Provider>
+    </NativeBaseProvider>
   );
 }
 
