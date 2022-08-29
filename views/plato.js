@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Button, Text, View, Image, Modal } from 'react-native-web';
+import { Button, Text, View, Image, Modal, Pressable } from 'react-native-web';
 import glutenFree from '../assets/gluten_free.png'
 import axios from 'axios';
 import { Center, HStack, Stack } from 'native-base';
@@ -22,19 +22,67 @@ async function agregarPlato(id) {
     });
 }
 
-function detalles(data) {
-    return (
+function detalles(data, modalVisible) {
+    return(
+    modalVisible ?
         <View style={styles.modalContainer}>
-            <Modal>
-                <Text>prueba</Text>
-            </Modal>
+            
         </View>
+    :
+        null
     )
 }
 
-export default function plato({ data, added, menu, setMenu}) {
+export default function plato({ data, added, menu, setMenu }) {
+    const [modalVisible, setModalVisible] = useState(false);
+
     return (
         <View style={styles.container}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!modalVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                    <Image
+                        style={styles.platoImage}
+                        source={{
+                            uri: data.image,
+                        }}
+                    />
+                    <Text style={{fontWeight: 600, marginBottom: 10}}>{data.title}</Text>
+                    <Text>${data.pricePerServing} / {data.readyInMinutes} mins.</Text>
+                    <Text style={{marginBottom: 20}}>Nivel de Saludable: {data.healthScore}</Text>
+                    { data.vegan ?
+                        <Text>Vegano: Sí</Text>
+                    :
+                        <Text>Vegano: No</Text>
+                    }
+                    { data.vegetarian ?
+                        <Text>Vegetariano: Sí</Text>
+                    :
+                        <Text>Vegetariano: No</Text>
+                    }
+                    { data.glutenFree ?
+                        <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
+                    :
+                        <Text style={{marginBottom: 15}}>Libre de Gluten: No</Text>
+                    }
+                    {/* <Text>{data.summary}</Text> */}
+                    <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                    <Text style={styles.textStyle}>Cerrar</Text>
+                    </Pressable>
+                </View>
+                </View>
+            </Modal>
             { added ?
                 <>
                     <Text style={{color: '#fff'}}>{data.title}</Text>
@@ -68,7 +116,7 @@ export default function plato({ data, added, menu, setMenu}) {
                 <Text style={{marginVertical: '.25rem'}}></Text>
                 <Button
                     onPress={() => {
-                        detalles(data)
+                        setModalVisible(!modalVisible)
                     }}
                     title="Detalles"
                 ></Button>
@@ -139,8 +187,7 @@ const styles = StyleSheet.create({
         height: '10rem',
         width: '10rem',
         borderRadius: '.25rem',
-        placeSelf: 'center',
-        marginTop: '1rem'
+        placeSelf: 'center'
     },
 
     caracteristicas: {
@@ -163,5 +210,48 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flex:1
+    },
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 10,
+        padding: 25,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+
+    buttonOpen: {
+        backgroundColor: "#F194FF",
+    },
+
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
     }
   });
