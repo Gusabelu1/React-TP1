@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, Text, View, Image, Modal, Pressable } from 'react-native-web';
-import glutenFree from '../assets/gluten_free.png'
+import glutenFree from '../assets/gluten_free.png';
+import vegan from '../assets/vegan.png';
 import axios from 'axios';
 import { Center, HStack, Stack } from 'native-base';
+import { flexbox } from 'styled-system';
 
 async function agregarPlato(id) {
     const apikey = '109d7d37f51f4bd7a32584d8f55ad71a';
@@ -92,18 +94,32 @@ export default function plato({ data, added, menu, setMenu }) {
                             uri: data.image,
                         }}
                     />
+                <View style={styles.imageContainer}>
                 { data.glutenFree ?
-                    <Center>
-                    <Image
-                        style={styles.glutenFree}
-                        source={{
-                            uri: glutenFree,
-                        }}
-                    />
-                    </Center>
+                    <View style={styles.leftContainer}>
+                        <Image
+                            style={styles.glutenFree}
+                            source={{
+                                uri: glutenFree,
+                            }}
+                        />
+                    </View>
                 :
                     <Text style={{height: '48px'}}></Text>
                 }
+                { data.vegan ?
+                    <View style={styles.rightContainer}>
+                        <Image
+                            style={styles.glutenFree}
+                            source={{
+                                uri: vegan,
+                            }}
+                        />
+                    </View>
+                :
+                    <Text style={{height: '48px'}}></Text>
+                }
+                </View>
                 <Text style={{color: '#fff', marginTop: '.5rem'}}>Precio: ${data.pricePerServing} c/u</Text>
                 <Text style={{color: '#fff', marginBottom: '.5rem'}}>Coccion: {data.readyInMinutes} minutos</Text>
                 <Button
@@ -120,11 +136,6 @@ export default function plato({ data, added, menu, setMenu }) {
                     }}
                     title="Detalles"
                 ></Button>
-                { data.vegan ?
-                    <Text style={{color: '#00cc00'}}>Vegano</Text>
-                    :
-                    <Text style={{height: '19px'}}></Text>
-                }
                 <Text style={{marginBottom: '2rem'}}></Text>
                 </>
             :
@@ -197,7 +208,6 @@ const styles = StyleSheet.create({
     glutenFree: {
         height: '3rem',
         width: '3rem',
-        // position: 'absolute'
     },
 
     modal: {
@@ -253,5 +263,22 @@ const styles = StyleSheet.create({
         color: "white",
         fontWeight: "bold",
         textAlign: "center"
-    }
+    },
+
+    imageContainer:{
+        flexDirection: 'row',
+        height: 54
+    },
+    
+    leftContainer:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems:'center'
+    },
+        
+    rightContainer:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
   });
