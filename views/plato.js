@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Center, HStack, Stack } from 'native-base';
 import { flexbox } from 'styled-system';
 
-async function agregarPlato(id) {
+async function detalles(id) {
     const apikey = '109d7d37f51f4bd7a32584d8f55ad71a';
     const url = `https://api.spoonacular.com/recipes/${id}/information`;
 
@@ -24,19 +24,9 @@ async function agregarPlato(id) {
     });
 }
 
-function detalles(data, modalVisible) {
-    return(
-    modalVisible ?
-        <View style={styles.modalContainer}>
-            
-        </View>
-    :
-        null
-    )
-}
-
 export default function plato({ data, added, menu, setMenu }) {
     const [modalVisible, setModalVisible] = useState(false);
+    const [data1, setData1] = useState([]);
 
     return (
         <View style={styles.container}>
@@ -58,22 +48,31 @@ export default function plato({ data, added, menu, setMenu }) {
                         }}
                     />
                     <Text style={{fontWeight: 600, marginBottom: 10}}>{data.title}</Text>
-                    <Text>${data.pricePerServing} / {data.readyInMinutes} mins.</Text>
-                    <Text style={{marginBottom: 20}}>Nivel de Saludable: {data.healthScore}</Text>
+                    <Text>${data.pricePerServing ? data.pricePerServing : data1.pricePerServing} / {data.readyInMinutes ? data.readyInMinutes : data1.readyInMinutes} mins.</Text>
+                    <Text style={{marginBottom: 20}}>Puntaje de Saludable: {data.healthScore ? data.healthScore : data1.healthScore}</Text>
                     { data.vegan ?
                         <Text>Vegano: Sí</Text>
                     :
-                        <Text>Vegano: No</Text>
+                        data1.vegan ? 
+                            <Text>Vegano: Sí</Text>
+                        :
+                            <Text>Vegano: No</Text>
                     }
                     { data.vegetarian ?
                         <Text>Vegetariano: Sí</Text>
                     :
-                        <Text>Vegetariano: No</Text>
+                        data1.vegetarian ?
+                            <Text>Vegano: Sí</Text>
+                        :
+                            <Text>Vegano: No</Text>
                     }
                     { data.glutenFree ?
                         <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
                     :
-                        <Text style={{marginBottom: 15}}>Libre de Gluten: No</Text>
+                        data1.glutenFree ?
+                            <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
+                        :
+                            <Text style={{marginBottom: 15}}>Libre de Gluten: No</Text>
                     }
                     {/* <Text>{data.summary}</Text> */}
                     <Pressable
@@ -87,7 +86,7 @@ export default function plato({ data, added, menu, setMenu }) {
             </Modal>
             { added ?
                 <>
-                    <Text style={{color: '#fff'}}>{data.title}</Text>
+                    <Text style={{color: '#fff', marginBottom: 5}}>{data.title}</Text>
                     <Image
                         style={styles.platoImage}
                         source={{
@@ -140,36 +139,54 @@ export default function plato({ data, added, menu, setMenu }) {
                 </>
             :
                 <>
-                <Text style={{color: '#fff'}}>{data.title}</Text>
-                <Button
-                    onPress={ async () => {
-                        let aux = menu
-                        let nuevoPlato = await agregarPlato(data.id)
-                        let platosVeganos = 0
-                        let platosNoVeganos = 0
+                <Text style={{color: '#fff', marginBottom: 5}}>{data.title}</Text>
+                <View style={styles.buttonContainer}>
+                    <View style={styles.leftContainer}>
+                        <Button
+                            onPress={ async () => {
+                                let aux = menu
+                                let nuevoPlato = await detalles(data.id)
+                                let platosVeganos = 0
+                                let platosNoVeganos = 0
 
-                        aux.forEach(element => {
-                            element.vegan ? platosVeganos++ : platosNoVeganos++
-                        });
+                                aux.forEach(element => {
+                                    element.vegan ? platosVeganos++ : platosNoVeganos++
+                                });
 
-                        if (nuevoPlato.vegan && platosVeganos == 2) {
-                            console.log("El menu ya tiene 2 platos veganos.")
-                            return null
-                        } else if (!nuevoPlato.vegan && platosNoVeganos == 2) {
-                            console.log("El menu ya tiene 2 platos no veganos.")
-                            return null
-                        }
+                                if (nuevoPlato.vegan && platosVeganos == 2) {
+                                    console.log("El menu ya tiene 2 platos veganos.")
+                                    return null
+                                } else if (!nuevoPlato.vegan && platosNoVeganos == 2) {
+                                    console.log("El menu ya tiene 2 platos no veganos.")
+                                    return null
+                                }
 
-                        aux.push(nuevoPlato)
-                        setMenu([...aux])
-                        console.log(menu)
-                    }}
+                                aux.push(nuevoPlato)
+                                setMenu([...aux])
+                                console.log(menu)
+                            }}
 
-                    disabled={menu.some(plato => {
-                        return (plato.id === data.id || menu.length == 4)
-                    })}
-                    title="Agregar"
-                ></Button>
+                            disabled={menu.some(plato => {
+                                return (plato.id === data.id || menu.length == 4)
+                            })}
+                            title="Agregar"
+                        ></Button>
+                    </View>
+                    <Text style={{marginHorizontal: 5}}></Text>
+                    <View style={styles.rightContainer}>
+                        <Button
+                            onPress={async () => {
+                                let nuevoPlato = []
+                                nuevoPlato = await detalles(data.id)
+                                setData1(nuevoPlato)
+                                console.log(data1)
+
+                                setModalVisible(!modalVisible)
+                            }}
+                            title="Detalles"
+                        ></Button>
+                    </View>
+                </View>
                 </>
             }
         </View>
@@ -270,6 +287,11 @@ const styles = StyleSheet.create({
         height: 54
     },
     
+    buttonContainer:{
+        flexDirection: 'row',
+        height: 35
+    },
+
     leftContainer:{
         flex: 1,
         justifyContent: 'center',
