@@ -4,22 +4,23 @@ import { Button, Text, View, Image, Modal, Pressable } from 'react-native-web';
 import glutenFree from '../assets/gluten_free.png';
 import vegan from '../assets/vegan.png';
 import axios from 'axios';
-import { Center, HStack, Stack } from 'native-base';
-import { flexbox } from 'styled-system';
 
-async function detalles(id) {
-    const apikey = '109d7d37f51f4bd7a32584d8f55ad71a';
+async function detalles(id, setLoading) {
+    const apikey = 'efa1021bcb2349a0b2f5517ef40ba1bf';
     const url = `https://api.spoonacular.com/recipes/${id}/information`;
 
+    setLoading(true)
     return await axios.get(url, {
         params: {
         apiKey: apikey
         }
     })
     .then((response) => {
+        setLoading(false)
         return response.data;
     })
     .catch(() => {
+        setLoading(false)
         return null;
     });
 }
@@ -27,6 +28,7 @@ async function detalles(id) {
 export default function plato({ data, added, menu, setMenu }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [data1, setData1] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     return (
         <View style={styles.container}>
@@ -40,48 +42,48 @@ export default function plato({ data, added, menu, setMenu }) {
                 }}
             >
                 <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Image
-                        style={styles.platoImage}
-                        source={{
-                            uri: data.image,
-                        }}
-                    />
-                    <Text style={{fontWeight: 600, marginBottom: 10}}>{data.title}</Text>
-                    <Text>${data.pricePerServing ? data.pricePerServing : data1.pricePerServing} / {data.readyInMinutes ? data.readyInMinutes : data1.readyInMinutes} mins.</Text>
-                    <Text style={{marginBottom: 20}}>Puntaje de Saludable: {data.healthScore ? data.healthScore : data1.healthScore}</Text>
-                    { data.vegan ?
-                        <Text>Vegano: Sí</Text>
-                    :
-                        data1.vegan ? 
+                    <View style={styles.modalView}>
+                        <Image
+                            style={styles.platoImage}
+                            source={{
+                                uri: data.image,
+                            }}
+                        />
+                        <Text style={{fontWeight: 600, marginBottom: 10}}>{data.title}</Text>
+                        <Text>${data.pricePerServing ? data.pricePerServing : data1.pricePerServing} / {data.readyInMinutes ? data.readyInMinutes : data1.readyInMinutes} mins.</Text>
+                        <Text style={{marginBottom: 20}}>HealthScore: {data.healthScore ? data.healthScore : data1.healthScore}</Text>
+                        { data.vegan ?
                             <Text>Vegano: Sí</Text>
                         :
-                            <Text>Vegano: No</Text>
-                    }
-                    { data.vegetarian ?
-                        <Text>Vegetariano: Sí</Text>
-                    :
-                        data1.vegetarian ?
-                            <Text>Vegano: Sí</Text>
+                            data1.vegan ? 
+                                <Text>Vegano: Sí</Text>
+                            :
+                                <Text>Vegano: No</Text>
+                        }
+                        { data.vegetarian ?
+                            <Text>Vegetariano: Sí</Text>
                         :
-                            <Text>Vegano: No</Text>
-                    }
-                    { data.glutenFree ?
-                        <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
-                    :
-                        data1.glutenFree ?
+                            data1.vegetarian ?
+                                <Text>Vegano: Sí</Text>
+                            :
+                                <Text>Vegano: No</Text>
+                        }
+                        { data.glutenFree ?
                             <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
                         :
-                            <Text style={{marginBottom: 15}}>Libre de Gluten: No</Text>
-                    }
-                    {/* <Text>{data.summary}</Text> */}
-                    <Pressable
-                        style={[styles.button, styles.buttonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}
-                    >
-                    <Text style={styles.textStyle}>Cerrar</Text>
-                    </Pressable>
-                </View>
+                            data1.glutenFree ?
+                                <Text style={{marginBottom: 15}}>Libre de Gluten: Sí</Text>
+                            :
+                                <Text style={{marginBottom: 15}}>Libre de Gluten: No</Text>
+                        }
+                        {/* <Text>{data.summary}</Text> */}
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => setModalVisible(!modalVisible)}
+                        >
+                            <Text style={styles.textStyle}>Cerrar</Text>
+                        </Pressable>
+                    </View>
                 </View>
             </Modal>
             { added ?
@@ -145,7 +147,7 @@ export default function plato({ data, added, menu, setMenu }) {
                         <Button
                             onPress={ async () => {
                                 let aux = menu
-                                let nuevoPlato = await detalles(data.id)
+                                let nuevoPlato = await detalles(data.id, setLoading)
                                 let platosVeganos = 0
                                 let platosNoVeganos = 0
 
@@ -166,7 +168,7 @@ export default function plato({ data, added, menu, setMenu }) {
                                 console.log(menu)
                             }}
 
-                            disabled={menu.some(plato => {
+                            disabled={loading ? loading : menu.some(plato => {
                                 return (plato.id === data.id || menu.length == 4)
                             })}
                             title="Agregar"
@@ -177,12 +179,14 @@ export default function plato({ data, added, menu, setMenu }) {
                         <Button
                             onPress={async () => {
                                 let nuevoPlato = []
-                                nuevoPlato = await detalles(data.id)
+                                nuevoPlato = await detalles(data.id, setLoading)
                                 setData1(nuevoPlato)
-                                console.log(data1)
 
                                 setModalVisible(!modalVisible)
                             }}
+                            disabled={loading ? loading : menu.some(plato => {
+                                return (plato.id === data.id)
+                            })}
                             title="Detalles"
                         ></Button>
                     </View>

@@ -6,7 +6,7 @@ import axios from 'axios';
 import Plato from './plato'
 
 async function onChangeFetchData(text) {
-  const apikey = '109d7d37f51f4bd7a32584d8f55ad71a';
+  const apikey = 'efa1021bcb2349a0b2f5517ef40ba1bf';
   const url = 'https://api.spoonacular.com/recipes/complexSearch';
   if (text.length > 2) {
     return await axios.get(url, {

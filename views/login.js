@@ -5,15 +5,18 @@ import { Button, TextInput, Alert } from 'react-native-web';
 import axios from 'axios';
 import authContext from '../contexts/authContext.js';
 
-async function authenticate (email, password) {
+async function authenticate (email, password, setLoggingIn) {
+    setLoggingIn(true)
     return axios.post('http://challenge-react.alkemy.org/', {
         email: email,
         password: password
     })
     .then(() => {
+        setLoggingIn(false)
         return true;
     })
     .catch(() => {
+        setLoggingIn(false)
         return false;
     })
 }
@@ -21,6 +24,7 @@ async function authenticate (email, password) {
 export default function login() {
   const [email, setEmail] = useState('');
   const [passwd, setPasswd] = useState('');
+  const [loggingIn, setLoggingIn] = useState(false);
   const { setToken } = useContext(authContext);
 
   return (
@@ -47,10 +51,11 @@ export default function login() {
                 if (!email || !passwd) {
                     console.log('error');
                 } else {
-                    const res = await authenticate(email, passwd);
+                    const res = await authenticate(email, passwd, setLoggingIn);
                     setToken(res)
                 }
             }}
+            disabled={loggingIn}
         ></Button>
       </View>
     </View>
