@@ -1,7 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput, Alert, Modal, FlatList } from 'react-native-web';
+import React, { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { TextInput, FlatList } from 'react-native-web';
 import axios from 'axios';
 import Plato from './plato'
 
@@ -35,7 +34,7 @@ export default function platos({props}) {
       <TextInput
         style={styles.search}
         onChangeText={async (text) => {setPlatos(await onChangeFetchData(text))}}
-        placeholder="Escriba algún plato"
+        placeholder="Busque algún plato"
       />
       <FlatList
         data={platos}
@@ -57,6 +56,7 @@ const styles = StyleSheet.create({
 
     search: {
       color: '#fff',
+      textAlign: 'center',
       borderBottomWidth: '.1rem',
       borderBottomColor: '#fff',
       paddingVertical: '.5rem',
@@ -65,6 +65,5 @@ const styles = StyleSheet.create({
 
     platos: {
       paddingTop: '1rem',
-      // minHeight: '175%',
     }
   });

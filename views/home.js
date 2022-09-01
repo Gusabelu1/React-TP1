@@ -1,12 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Button, TextInput, Alert, FlatList } from 'react-native-web';
-import Busqueda from './busqueda.js'
-import axios from 'axios';
+import { FlatList } from 'react-native-web';
 import Plato from './plato';
 import { HStack, VStack } from 'native-base';
-import { maxWidth } from 'styled-system';
 
 export default function platos({props}) {
   const renderItem = ({ item }) => (
@@ -14,7 +10,7 @@ export default function platos({props}) {
   )
   let flatLists = [[], []];
   let precioTotal = 0;
-  let promHealthScore = 0;
+  let promTiempo = 0;
 
   for(let i=0; i < props.menu.length; i++) {
     if (props.menu[i]) {
@@ -32,17 +28,17 @@ export default function platos({props}) {
   props.setPrecioTotal(precioTotal.toFixed(2))
 
   props.menu.forEach(element => {
-    promHealthScore += element.healthScore
+    promTiempo += element.readyInMinutes
   })
-  promHealthScore /= props.menu.length
-  props.setPromHealthScore(promHealthScore.toFixed(0))
+  promTiempo /= props.menu.length
+  props.setPromTiempo(promTiempo.toFixed(0))
 
   return (
     <View style={styles.container}>
         <VStack space={1}>
           <View style={{marginTop: 10}}>
             <Text style={{color: '#fff'}}>Precio Total: ${props.precioTotal}</Text>
-            <Text style={{color: '#fff'}}>HealthScore Promedio: {props.promHealthScore}</Text>
+            <Text style={{color: '#fff'}}>Tiempo de Preparacion promedio: {props.promTiempo} minutos</Text>
           </View>
           <View style={{marginHorizontal: 10}}>
           <HStack space={4}>
@@ -67,6 +63,7 @@ export default function platos({props}) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#1d1d27',
     textAlign: 'center'
   },
 

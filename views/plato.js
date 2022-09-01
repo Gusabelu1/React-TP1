@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, Text, View, Image, Modal, Pressable } from 'react-native-web';
 import glutenFree from '../assets/gluten_free.png';
@@ -37,8 +37,7 @@ export default function plato({ data, added, menu, setMenu }) {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
-                Alert.alert("Modal has been closed.");
-                setModalVisible(!modalVisible);
+                    setModalVisible(!modalVisible);
                 }}
             >
                 <View style={styles.centeredView}>
